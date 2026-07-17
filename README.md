@@ -16,11 +16,13 @@
 
 本機開啟 `index.html` 即可使用；`index.html` 與 `中英學習軟體.html` 為同一份發布內容。
 
-版本：v1.3.0
+版本：v1.3.1
 
 v1.2.0：字彙表的 AI 抽取支援短文、單次出現的重要單字與片語，並以原文存在性 gate 防止候選詞捏造。
 
-v1.3.0：模型升級為 GPT-5.6（預設 `gpt-5.6`，成本平衡 fallback `gpt-5.6-terra`）；使用者選定模型優先於上次成功模型。字彙抽取改為跨 chunk rank round-robin、每次全域最多 20 組，並強化英文完整 token、智慧引號與 dash 變體比對。
+v1.3.0：模型升級為 GPT-5.6（當版以 `gpt-5.6` Sol alias 為預設、`gpt-5.6-terra` 為成本平衡 fallback）；使用者選定模型優先於上次成功模型。字彙抽取改為跨 chunk rank round-robin、每次全域最多 20 組，並強化英文完整 token、智慧引號與 dash 變體比對。
+
+v1.3.1：依 OpenAI 官方 model catalog 改用顯式 Sol ID `gpt-5.6-sol`；保留 `gpt-5.6-terra` fallback，並把舊 `gpt-5.6` alias 視為 stale storage、自動遷移至 Sol 顯式 ID。
 
 ## 品牌圖示
 

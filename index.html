@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh-Hant" data-theme="dark">
 <head>
-  <!-- 中英書房 v1.3.0 · 2026-07-17 · pre-edit v1.2.0 SHA256 883382D9654EFA78185C02C37A3F9E80E1FD1B643C0616EDC2447D5D6835F817 -->
+  <!-- 中英書房 v1.3.1 · 2026-07-17 · pre-edit v1.3.0 SHA256 80163168B0874DEE17B219E07ECBFC881342540ECD3485194FF082B131795F5F -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#07090d" />
@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="中英書房" />
-  <title>中英書房 v1.3.0 | 中文 ⇄ English</title>
+  <title>中英書房 v1.3.1 | 中文 ⇄ English</title>
 
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png" />
@@ -21,7 +21,7 @@
 
   <style>
     /* ============================================================
-       BILINGUAL CABINET · v1.3.0 — 中文 ⇄ English
+       BILINGUAL CABINET · v1.3.1 — 中文 ⇄ English
        Business mail generator and face-to-face interpreter.
        ============================================================ */
 
@@ -1898,12 +1898,12 @@
 
   <script>
   'use strict';
-  /* 中英書房 v1.3.0 — canonical result / pending stream architecture */
+  /* 中英書房 v1.3.1 — canonical result / pending stream architecture */
   const $=id=>document.getElementById(id);
   const CONFIG={DEBOUNCE_MS:700,GRID_MIN:.24,GRID_MAX:.76,DEFAULT_GRID:.42,API:'https://api.openai.com/v1',TTS:'https://texttospeech.googleapis.com/v1',TOAST_MS:3600,TTS_TIMEOUT:60000,VOICE_WAIT_MS:900,GLOSSARY_EXTRACT_LIMIT:20};
   const KEYS={API:'openai_key',TTS:'tri_ttskey',MODEL:'enbi_model',LAST_MODEL:'enbi_last_model',THEME:'enbi_theme',SRC:'enbi_src_text',GRID:'enbi_grid_split',CHAT_W:'enbi_chat_width',LAYOUT:'enbi_layout_version',LANG:'enbi_lang_override',GLOSSARY:'enbi_glossary',CHAT:'enbi_chat_history',MODE:'enbi_mode',SCENE:'enbi_scene',AUDIENCE:'enbi_audience',AUTO_SPEAK:'enbi_auto_speak',AUTO_REFINE:'enbi_auto_refine'};
   const MODE_POLICY=Object.freeze({mail:Object.freeze({auto:false,enter:false,autoSpeak:false,refine:true,mailTools:true}),interp:Object.freeze({auto:true,enter:true,autoSpeak:true,refine:false,mailTools:false})});
-  const MODELS=['gpt-5.6','gpt-5.6-terra'];
+  const MODELS=['gpt-5.6-sol','gpt-5.6-terra'];
   const LANGUAGES={
     'zh-TW':{display:'中文',name:'繁體中文（台灣）',tts:{cloudLang:'cmn-TW',cloudVoice:'cmn-TW-Wavenet-A',localLang:'zh-TW'}},
     en:{display:'英文',name:'English',tts:{cloudLang:'en-US',cloudVoice:'en-US-Wavenet-F',localLang:'en-US'}}
@@ -2252,7 +2252,7 @@
     const cases=[['canonical','Subject: Project update\n\nBody',true],['case-insensitive','subject: project update\nBody',true],['BOM','\uFEFFSubject: Update\nBody',true],['CRLF','Subject: Update\r\n\r\nBody',true],['outer whitespace','  Subject: Update\n\nBody  ',true],['outer fence','```text\nSubject: Update\n\nBody\n```',true],['markdown decorated','**Subject:** Update\nBody',false],['preamble','Here is the email:\nSubject: Update\nBody',false],['mid-body','Preamble\nSubject: Update\nBody',false],['second Subject','Subject: A\n\nBody\nSubject: B',false],['empty subject','Subject:\nBody',false],['empty body','Subject: Update',false],['partial fence','```\nSubject: Update\n```\nBody',false],['fence in body','```text\nSubject: Update\n\nBody```fragment\n```',false]];
     for(const[c,s,ok]of cases)assertion(`parser ${c}`,parseMailResult(s).ok===ok,r);const rt=parseMailResult(serializeMailResult("Client's Q3 Review","We're on track. Don’t worry.")),lower=parseMailResult('subject: client update\n\nBody');assertion('parse/serialize apostrophe round-trip',rt.subject==="Client's Q3 Review"&&rt.body==="We're on track. Don’t worry.",r);assertion('lowercase Subject parses and serializes canonical',lower.ok&&serializeMailResult(lower.subject,lower.body)==='Subject: client update\n\nBody',r);
     assertion('mode policy mail manual',!modePolicy('mail').auto&&!modePolicy('mail').enter&&modePolicy('mail').refine,r);assertion('mode policy interp auto/enter',modePolicy('interp').auto&&modePolicy('interp').enter&&!modePolicy('interp').refine,r);
-    {const savedModel=state.model,savedLastModel=state.lastModel;state.model='gpt-5.6-terra';state.lastModel='gpt-5.6';assertion('selected model outranks last successful model',preferredModels()[0]==='gpt-5.6-terra',r);state.lastModel='gpt-5.4';assertion('model fallback excludes retired non-allowlisted model',!preferredModels().includes('gpt-5.4'),r);state.model='gpt-5.6';state.lastModel='gpt-5.6';assertion('model fallback deduplicates and keeps allowlist order',JSON.stringify(preferredModels())===JSON.stringify(MODELS),r);state.model=savedModel;state.lastModel=savedLastModel}
+    {const savedModel=state.model,savedLastModel=state.lastModel;state.model='gpt-5.6-terra';state.lastModel='gpt-5.6-sol';assertion('selected model outranks last successful model',preferredModels()[0]==='gpt-5.6-terra',r);state.lastModel='gpt-5.4';assertion('model fallback excludes retired non-allowlisted model',!preferredModels().includes('gpt-5.4'),r);state.lastModel='gpt-5.6';assertion('model fallback excludes retired GPT-5.6 alias',!preferredModels().includes('gpt-5.6'),r);state.model='gpt-5.6-sol';state.lastModel='gpt-5.6-sol';assertion('model fallback deduplicates and keeps allowlist order',JSON.stringify(preferredModels())===JSON.stringify(MODELS),r);state.model=savedModel;state.lastModel=savedLastModel}
     assertion('scene labels stay Chinese and guidance is English',Object.values(SCENES).every(([label,guidance])=>/[\u3400-\u9fff]/.test(label)&&!/[\u3400-\u9fff]/.test(guidance)&&/[A-Za-z]/.test(guidance)),r);
     assertion('placeholder hard exact/case/space',findPlaceholders('[Recipient Name] [recipient name] [Recipient  Name]').length===3,r);assertion('placeholder hard excluded from suspicious',findPlaceholders('[Date]').length===1&&findSuspiciousPlaceholders('[Date]').length===0,r);assertion('placeholder normal brackets ignored',findPlaceholders('[Q3] [1] [ok]').length===0&&findSuspiciousPlaceholders('[Q3] [1] [ok]').length===0,r);assertion('placeholder suspicious net',findPlaceholders('[Client Name]').length===0&&findSuspiciousPlaceholders('[Client Name] ○○').length===2,r);
     const sigBase='Subject: Update for [Recipient Name]\n\nHello [Client Name] ○○',sigCanonical='Subject: Update for [recipient  name]\n\nHello [client   name] ○○';assertion('placeholder signature canonicalizes case/space',placeholderSignature(sigBase)===placeholderSignature(sigCanonical),r);assertion('placeholder signature rejects removal',placeholderSignature(sigBase)!==placeholderSignature('Subject: Update\n\nHello [Client Name] ○○'),r);assertion('placeholder signature rejects equal-count replacement',placeholderSignature(sigBase)!==placeholderSignature('Subject: Update for [Company Name]\n\nHello [Client Name] ○○'),r);assertion('placeholder signature rejects addition',placeholderSignature(sigBase)!==placeholderSignature(`${sigBase} [Deadline]`),r);assertion('placeholder signature protects suspicious tokens',placeholderSignature(sigBase)!==placeholderSignature('Subject: Update for [Recipient Name]\n\nHello ○○'),r);
