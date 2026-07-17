@@ -1,0 +1,5 @@
+{
+  "seed": 31003,
+  "html": ["index.html", "中英學習軟體.html"],
+  "copy": ["assets", "manifest.webmanifest"]
+}
